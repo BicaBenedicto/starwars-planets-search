@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import Context from '../services/context';
 
 function Table() {
-  const { data } = useContext(Context);
+  const { data, filterByName } = useContext(Context);
   return (
     <table>
       <tr>
@@ -20,7 +20,7 @@ function Table() {
         <th>Edited</th>
         <th>URL</th>
       </tr>
-      {data && (
+      {(data && !filterByName) ? (
         data.map((planet) => (
           <tr key={ planet.name }>
             <td>{ planet.name }</td>
@@ -38,7 +38,26 @@ function Table() {
             <td>{ planet.url }</td>
           </tr>
         ))
-      )}
+      )
+        : (
+          data.filter(({ name }) => name.includes(filterByName)).map((planet) => (
+            <tr key={ planet.name }>
+              <td>{ planet.name }</td>
+              <td>{ planet.rotation_period }</td>
+              <td>{ planet.orbital_period }</td>
+              <td>{ planet.diameter }</td>
+              <td>{ planet.climate }</td>
+              <td>{ planet.gravity }</td>
+              <td>{ planet.terrain }</td>
+              <td>{ planet.surface_water }</td>
+              <td>{ planet.population }</td>
+              <td>{ planet.films }</td>
+              <td>{ planet.created }</td>
+              <td>{ planet.edited }</td>
+              <td>{ planet.url }</td>
+            </tr>
+          ))
+        )}
     </table>
   );
 }
