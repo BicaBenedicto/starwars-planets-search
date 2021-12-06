@@ -1,9 +1,12 @@
 import React from 'react';
 import './App.css';
+import Context from './services/Context';
 
 function App() {
   return (
-    <span>Hello, App!</span>
+    <Context.Provider value={ {} }>
+      <span>Hello, App!</span>
+    </Context.Provider>
   );
 }
 
