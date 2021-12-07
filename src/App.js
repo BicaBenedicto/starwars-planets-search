@@ -5,6 +5,9 @@ import Table from './components/Table';
 import Filter from './components/Filter';
 import requisitionAPI from './services/requisitionAPI';
 
+const OPTIONS_SELECT_INITIAL = ['population', 'orbital_period',
+  'diameter', 'rotation_period', 'surface_water'];
+
 function App() {
   const [planets, setPlanets] = useState([]);
   const [planetsFilter, setPlanetsFilter] = useState([]);
@@ -15,6 +18,7 @@ function App() {
     value: 0,
   }]);
   const [hasFilter, setHasFilter] = useState(false);
+  const [optionsSelect, setOptionsSelect] = useState(OPTIONS_SELECT_INITIAL);
 
   const store = {
     data: planets,
@@ -25,6 +29,8 @@ function App() {
     filterByNumericValues,
     setFilterByNumericValues,
     planetsFilter,
+    optionsSelect,
+    setOptionsSelect,
   };
 
   const callingApi = async () => {

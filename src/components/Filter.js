@@ -1,15 +1,21 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Context from '../services/context';
 
 function Filter() {
   const { filterByName, setFilterByName,
     filterByNumericValues, setFilterByNumericValues,
+    optionsSelect, setOptionsSelect,
     setHasFilter } = useContext(Context);
 
   const handleClick = (e) => {
     e.preventDefault();
     setHasFilter(true);
+    const newOptions = optionsSelect
+      .filter((option) => filterByNumericValues.every(({ column }) => column !== option));
+    setOptionsSelect(newOptions);
   };
+
+  useEffect(() => {}, [optionsSelect]);
 
   return (
     <div>
@@ -30,11 +36,9 @@ function Filter() {
               [{ ...filterByNumericValues[0], column: target.value }],
             )) }
         >
-          <option value="population">population</option>
-          <option value="orbital_period">orbital_period</option>
-          <option value="diameter">diameter</option>
-          <option value="rotation_period">rotation_period</option>
-          <option value="surface_water">surface_water</option>
+          {optionsSelect.map((option, index) => (
+            <option key={ index } value={ option }>{option}</option>
+          ))}
         </select>
         <select
           data-testid="comparison-filter"
