@@ -10,15 +10,16 @@ const OPTIONS_SELECT_INITIAL = ['population', 'orbital_period',
 
 function App() {
   const [planets, setPlanets] = useState([]);
-  const [planetsFilter, setPlanetsFilter] = useState([]);
+  const [planetsFiltered, setPlanetsFiltered] = useState([]);
   const [filterByName, setFilterByName] = useState('');
-  const [filterByNumericValues, setFilterByNumericValues] = useState([{
+  const [filterByNumericValues, setFilterByNumericValues] = useState([]);
+  const [hasFilter, setHasFilter] = useState(false);
+  const [optionsSelect, setOptionsSelect] = useState(OPTIONS_SELECT_INITIAL);
+  const [actualFilterSelected, changeActualFilterSelected] = useState({
     column: 'population',
     comparison: 'maior que',
     value: 0,
-  }]);
-  const [hasFilter, setHasFilter] = useState(false);
-  const [optionsSelect, setOptionsSelect] = useState(OPTIONS_SELECT_INITIAL);
+  });
 
   const store = {
     data: planets,
@@ -28,15 +29,18 @@ function App() {
     setFilterByName,
     filterByNumericValues,
     setFilterByNumericValues,
-    planetsFilter,
+    planetsFiltered,
+    setPlanetsFiltered,
     optionsSelect,
     setOptionsSelect,
+    actualFilterSelected,
+    changeActualFilterSelected,
   };
 
   const callingApi = async () => {
     const data = await requisitionAPI();
     setPlanets(data);
-    setPlanetsFilter(data);
+    setPlanetsFiltered(data);
   };
 
   useEffect(() => { callingApi(); }, []);

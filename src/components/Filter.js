@@ -2,20 +2,76 @@ import React, { useContext, useEffect } from 'react';
 import Context from '../services/context';
 
 function Filter() {
-  const { filterByName, setFilterByName,
+  const { filterByName, setFilterByName, setPlanetsFiltered,
     filterByNumericValues, setFilterByNumericValues,
-    optionsSelect, setOptionsSelect,
-    setHasFilter } = useContext(Context);
+    optionsSelect, setOptionsSelect, data,
+    setHasFilter, actualFilterSelected, planetsFiltered,
+    changeActualFilterSelected } = useContext(Context);
 
-  const handleClick = (e) => {
-    e.preventDefault();
-    setHasFilter(true);
+  useEffect(() => {}, [optionsSelect, planetsFiltered, filterByNumericValues]);
+
+  useEffect(() => {
+    const newPlanets = data.filter((planet) => planet.name.includes(filterByName));
+    setPlanetsFiltered(newPlanets);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterByName]);
+
+  useEffect(() => {
+    const verifyPlanet = (planet) => filterByNumericValues
+      .every(({ column, comparison, value }) => {
+        if (planet[column] === 'unknown') return false;
+        if (comparison === 'igual a') {
+          return Number(planet[column]) === Number(value);
+        }
+        if (comparison === 'menor que') {
+          return Number(planet[column]) < Number(value);
+        }
+        if (comparison === 'maior que') {
+          return Number(planet[column]) > Number(value);
+        }
+        return false;
+      });
+
     const newOptions = optionsSelect
       .filter((option) => filterByNumericValues.every(({ column }) => column !== option));
     setOptionsSelect(newOptions);
+
+    const newPlanets = planetsFiltered.filter((planet) => verifyPlanet(planet));
+    setPlanetsFiltered(newPlanets);
+    if (filterByNumericValues.length === 0) setPlanetsFiltered(data);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterByNumericValues]);
+
+  const handleClick = (e) => {
+    e.preventDefault();
+
+    setFilterByNumericValues([...filterByNumericValues, actualFilterSelected]);
+
+    setHasFilter(true);
   };
 
-  useEffect(() => {}, [optionsSelect]);
+  const onButtonRemove = ({ target }) => {
+    const { name } = target;
+    const newFilters = filterByNumericValues.filter(({ column }) => column !== name);
+    setFilterByNumericValues(newFilters);
+  };
+
+  const renderTableFilter = () => (
+    filterByNumericValues.map((filterItem, index) => (
+      <div data-testid="filter" key={ index }>
+        <span>{filterItem.column}</span>
+        <span>{filterItem.comparison}</span>
+        <span>{filterItem.value}</span>
+        <button
+          type="button"
+          onClick={ onButtonRemove }
+          name={ filterItem.column }
+        >
+          X
+        </button>
+      </div>
+    ))
+  );
 
   return (
     <div>
@@ -30,10 +86,10 @@ function Filter() {
       <form onSubmit={ handleClick }>
         <select
           data-testid="column-filter"
-          value={ filterByNumericValues[0].column }
+          value={ actualFilterSelected.column }
           onChange={ ({ target }) => (
-            setFilterByNumericValues(
-              [{ ...filterByNumericValues[0], column: target.value }],
+            changeActualFilterSelected(
+              { ...actualFilterSelected, column: target.value },
             )) }
         >
           {optionsSelect.map((option, index) => (
@@ -42,10 +98,10 @@ function Filter() {
         </select>
         <select
           data-testid="comparison-filter"
-          value={ filterByNumericValues[0].comparison }
+          value={ actualFilterSelected.comparison }
           onChange={ ({ target }) => (
-            setFilterByNumericValues(
-              [{ ...filterByNumericValues[0], comparison: target.value }],
+            changeActualFilterSelected(
+              { ...actualFilterSelected, comparison: target.value },
             )) }
         >
           <option value="maior que">maior que</option>
@@ -55,10 +111,10 @@ function Filter() {
         <input
           type="number"
           data-testid="value-filter"
-          value={ filterByNumericValues[0].value }
+          value={ actualFilterSelected.value }
           onChange={ ({ target }) => (
-            setFilterByNumericValues(
-              [{ ...filterByNumericValues[0], value: target.value }],
+            changeActualFilterSelected(
+              { ...actualFilterSelected, value: target.value },
             )) }
         />
         <button
@@ -68,6 +124,9 @@ function Filter() {
           Filtro
         </button>
       </form>
+      <div>
+        {filterByNumericValues.length !== 0 && renderTableFilter()}
+      </div>
     </div>
   );
 }
