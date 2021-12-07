@@ -7,6 +7,11 @@ import requisitionAPI from './services/requisitionAPI';
 
 const OPTIONS_SELECT_INITIAL = ['population', 'orbital_period',
   'diameter', 'rotation_period', 'surface_water'];
+const ORDER_INITIAL = {
+  hasOrder: false,
+  column: 'population',
+  sort: 'ASC',
+};
 
 function App() {
   const [planets, setPlanets] = useState([]);
@@ -20,6 +25,7 @@ function App() {
     comparison: 'maior que',
     value: 0,
   });
+  const [order, setOrder] = useState(ORDER_INITIAL);
 
   const store = {
     data: planets,
@@ -35,6 +41,8 @@ function App() {
     setOptionsSelect,
     actualFilterSelected,
     changeActualFilterSelected,
+    order,
+    setOrder,
   };
 
   const callingApi = async () => {
