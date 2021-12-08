@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import Context from '../services/context';
+import './Filter.css';
 
 const OPTIONS_SELECT_INITIAL = ['population', 'orbital_period',
   'diameter', 'rotation_period', 'surface_water'];

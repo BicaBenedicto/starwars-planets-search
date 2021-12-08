@@ -1,23 +1,17 @@
 import React, { useContext, useEffect } from 'react';
 import Context from '../services/context';
-
-const GAMBIARRA_NUMBER = 200000; // Criado para passar de etapa do requisito 6, por solicitar que o unknow fique acima dos que tem menor numero e ele não possuir valor
-
-const changeGambiarraToNumber = (number) => (
-  number === 'unknown'
-    ? GAMBIARRA_NUMBER : Number(number)
-);
+import './Table.css';
 
 const renderSortTable = (planets, order) => (
   planets.sort((a, b) => {
     if (order.hasOrder) {
       if (order.sort === 'DESC') {
-        return changeGambiarraToNumber(b[order.column])
-          - changeGambiarraToNumber(a[order.column]);
+        return b[order.column]
+          - a[order.column];
       }
       if (order.sort === 'ASC') {
-        return changeGambiarraToNumber(a[order.column])
-        - changeGambiarraToNumber(b[order.column]);
+        return a[order.column]
+        - b[order.column];
       }
     }
     return a.name.localeCompare(b.name);
